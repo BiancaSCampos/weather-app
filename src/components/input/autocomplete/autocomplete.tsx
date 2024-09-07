@@ -93,7 +93,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
           onChange={onChange}
           onKeyDown={onKeyDown}
           value={inputValue ?? ""}
-          className="w-full font-poppins text-lg resize-none outline-none border-none p-1"
+          className="w-full font-poppins text-base resize-none outline-none border-none p-1"
           placeholder={placeholder}
         />
         {icon}

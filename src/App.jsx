@@ -6,11 +6,13 @@ import Title from "./components/title/Title";
 
 
 const App = () => {
+  
  
 
   return (
     <div className="bg-gradient-to-b from-indigo-600 to-indigo-400 h-full  flex flex-col items-center">
-      <div className="lg:max-w-[40%] md:max-w-[40%] sm:max-w-[40%] w-full p-5" >
+      
+      <div className="lg:max-w-[30%] md:max-w-[40%] sm:max-w-[20%] w-full  p-3" >
         <Title />
         <Input
           placeholder="Digite uma cidade"
@@ -18,6 +20,7 @@ const App = () => {
         
         />
         <DisplayCityCard/>
+      
       </div>
     </div>
   );
