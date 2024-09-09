@@ -1,6 +1,5 @@
 // src/Autocomplete.tsx
-import React, { ReactElement, useContext, useState } from "react";
-import { CityContext } from "../../../utils/context/cityContext";
+import React, { ReactElement, useState } from "react";
 import { useCity } from "../../../utils/hooks/useCity";
 
 interface City {
