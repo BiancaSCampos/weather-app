@@ -1,8 +1,17 @@
 // src/Autocomplete.tsx
 import React, { ReactElement, useState } from "react";
+import { useCity } from "../../../utils/hooks/useCity";
+
+interface City {
+  name: string;
+  state?: string;
+  country: string;
+  lat: number;
+  lon: number;
+}
 
 interface AutocompleteProps {
-  fetchSuggestions: (query: string) => Promise<string[]>;
+  fetchSuggestions: (query: string) => Promise<City[]>;
   placeholder: string;
   icon?: ReactElement;
 }
@@ -12,11 +21,12 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
   placeholder,
   icon,
 }) => {
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<City[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const { setSelectedCity } = useCity();
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const userInput = e.currentTarget.value;
@@ -26,26 +36,37 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
 
     if (userInput.length > 0) {
       setLoading(true);
+
       const suggestions = await fetchSuggestions(userInput);
       setFilteredSuggestions(suggestions);
+
       setLoading(false);
     } else {
       setFilteredSuggestions([]);
     }
   };
 
-  const onClick = (e: React.MouseEvent<HTMLLIElement>) => {
-    const selectedValue = e.currentTarget.innerText;
-    console.log("Clicked suggestion:", selectedValue);
-    setInputValue(selectedValue);
+  const onClick = (e: React.MouseEvent<HTMLLIElement>, suggestion: City) => {
+    const formattedValue = `${suggestion.name}, ${suggestion.state || ""}, ${
+      suggestion.country
+    }`;
+    setInputValue(formattedValue);
+    setSelectedCity(suggestion);
     setFilteredSuggestions([]);
     setShowSuggestions(false);
+    console.log("Selected city:", suggestion);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setInputValue(filteredSuggestions[activeSuggestionIndex]);
+      const selected = filteredSuggestions[activeSuggestionIndex];
+      const formattedValue = `${selected.name}, ${selected.state || ""}, ${
+        selected.country
+      }`;
+      setInputValue(formattedValue);
+
       setShowSuggestions(false);
+      console.log("Selected city:", selected);
     } else if (e.key === "ArrowUp") {
       if (activeSuggestionIndex === 0) return;
       setActiveSuggestionIndex(activeSuggestionIndex - 1);
@@ -61,39 +82,41 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     }
 
     return filteredSuggestions.length ? (
-      <ul className="suggestions text-indigo-500 font-poppins rounded-xl ">
+      <ul className="suggestions text-indigo-500 font-poppins rounded-xl">
         {filteredSuggestions.map((suggestion, index) => {
           let className;
           if (index === activeSuggestionIndex) {
-            className = "";
+            className = "active";
           }
           return (
             <li
-              className="hover:bg-indigo-100 rounded-xl p-1 "
-              key={suggestion}
-              onClick={onClick}
+              className={`hover:bg-indigo-100 rounded-xl p-1 ${className}`}
+              key={`${suggestion.name}-${suggestion.lat}-${suggestion.lon}`}
+              onClick={(e) => onClick(e, suggestion)} // Pass suggestion to onClick
             >
-              {suggestion}
+              {`${suggestion.name}, ${suggestion.state || ""}, ${
+                suggestion.country
+              }`}
             </li>
           );
         })}
       </ul>
     ) : (
-      <div className="no-suggestions  ">
-        <em>Nenhuma sugestão dísponivel</em>
+      <div className="no-suggestions">
+        <em>No suggestions available</em>
       </div>
     );
   };
 
   return (
     <div className="w-full">
-      <div className="flex flex-row justify-between items-center  rounded-xl w-full text-indigo-700">
+      <div className="flex flex-row justify-between items-center rounded-xl w-full text-indigo-700">
         <input
           type="text"
           onChange={onChange}
           onKeyDown={onKeyDown}
           value={inputValue ?? ""}
-          className="w-full font-poppins text-lg resize-none outline-none border-none p-1"
+          className="w-full font-poppins text-base resize-none outline-none border-none p-1"
           placeholder={placeholder}
         />
         {icon}
