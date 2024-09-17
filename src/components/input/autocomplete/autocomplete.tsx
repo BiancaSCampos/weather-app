@@ -1,5 +1,5 @@
 // src/Autocomplete.tsx
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import { useCity } from "../../../utils/hooks/useCity";
 
 interface City {
@@ -26,7 +26,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const { setSelectedCity } = useCity();
+  const { selectedCity, setSelectedCity } = useCity();
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const userInput = e.currentTarget.value;
@@ -57,11 +57,17 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     console.log("Selected city:", suggestion);
   };
 
+  useEffect(() => {
+    if (selectedCity.name === "") {
+      setInputValue("");
+    }
+  }, [selectedCity]);
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (filteredSuggestions.length === 0) return; 
+    if (filteredSuggestions.length === 0) return;
 
     if (e.key === "Enter") {
-      e.preventDefault(); 
+      e.preventDefault();
       const selected = filteredSuggestions[activeSuggestionIndex];
       const formattedValue = `${selected.name}, ${selected.state || ""}, ${
         selected.country
@@ -72,11 +78,11 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
       setShowSuggestions(false);
       console.log("Selected city:", selected);
     } else if (e.key === "ArrowUp") {
-      e.preventDefault(); 
+      e.preventDefault();
       if (activeSuggestionIndex === 0) return;
       setActiveSuggestionIndex(activeSuggestionIndex - 1);
     } else if (e.key === "ArrowDown") {
-      e.preventDefault(); 
+      e.preventDefault();
       if (activeSuggestionIndex + 1 === filteredSuggestions.length) return;
       setActiveSuggestionIndex(activeSuggestionIndex + 1);
     }
@@ -88,7 +94,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     }
 
     return filteredSuggestions.length ? (
-      <ul className="suggestions absolute w-full bg-white shadow-lg rounded-xl text-indigo-500 font-poppins z-10">
+      <ul className="suggestions absolute w-full bg-white shadow-lg rounded-xl text-indigo-500 font-poppins z-10 pr-1 pl-1">
         {filteredSuggestions.map((suggestion, index) => {
           const isActive = index === activeSuggestionIndex;
           const className = isActive ? "active bg-indigo-200" : "";
@@ -118,7 +124,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
         <input
           type="text"
           onChange={onChange}
-          onKeyDown={onKeyDown} 
+          onKeyDown={onKeyDown}
           value={inputValue ?? ""}
           className="w-full font-poppins text-base resize-none outline-none border-none p-1"
           placeholder={placeholder}
