@@ -17,7 +17,7 @@ const App = () => {
           />
           <DisplayCityCard  />
 
-          <span className="w-full h-0.5 mt-2 bg-white rounded-lg" />
+          <span className="w-full h-0.5 rounded-lg mt-5  bg-white block" />
         </div>
       </div>
     </CityProvider>
