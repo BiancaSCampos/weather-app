@@ -153,7 +153,7 @@ const DisplayCityCard = () => {
               </div>
               <InfoItem
                 title="Sensação"
-                info={`${cityData.main.feels_like}°C`}
+                info={`${Math.round(cityData.main.feels_like)}°C`}
               />
               <InfoItem title="Vento" info={`${cityData.wind.speed} km/h`} />
               <InfoItem title="Humidade" info={`${cityData.main.humidity}%`} />
