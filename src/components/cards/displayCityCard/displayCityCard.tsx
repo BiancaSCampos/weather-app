@@ -4,6 +4,8 @@ import { useCity } from "../../../utils/hooks/useCity";
 import { fetchCity } from "../../../services/requests/fetchCity";
 import { fetchCityFiveDays } from "../../../services/requests/fetchCityFiveDays";
 import { extractTemperatureData } from "../../../utils/functions/extractTemperatureData";
+import { getDayOfWeek } from "../../../utils/functions/getDayOfWeek";
+import Close from "../../../assets/svg/Close";
 
 interface InfoItemProps {
   title: string;
@@ -82,7 +84,7 @@ const DisplayCityCard = () => {
   const [fiveDaysForecast, setFiveDaysForecast] = useState<
     TemperatureData[] | null
   >(null);
-  const { selectedCity } = useCity();
+  const { selectedCity, setSelectedCity } = useCity();
 
   useEffect(() => {
     const fetchDataCity = async () => {
@@ -114,66 +116,65 @@ const DisplayCityCard = () => {
     fetchDataCity();
   }, [selectedCity]);
 
-  const getDayOfWeek = (dateString: string) => {
-    const date = new Date(dateString);
-    const daysOfWeek = [
-      "Domingo",
-      "Segunda",
-      "Terça",
-      "Quarta",
-      "Quinta",
-      "Sexta",
-      "Sábado",
-    ];
-    return daysOfWeek[date.getDay()];
+  const onClickClose = () => {
+    setSelectedCity({ name: "", state: "", country: "", lat: 0, lon: 0 });
   };
 
   return (
     <>
-      {selectedCity.name && !loading && cityData ? (
-        <div className="flex flex-col bg-white rounded-xl p-3 font-poppins text-base mt-4 shadow-md text-indigo-900">
-          <div className="text-base">
-            <h2>
-              {selectedCity.name}, {selectedCity.state} - {selectedCity.country}
-            </h2>
-          </div>
-          <div className="text-4xl mt-2 font-semibold">
-            <span>
-              {Math.round(cityData.main.temp)}°C{" "}
-              {cityData.weather[0].description}
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-1 mt-3">
-            <div className="text-base">
-              <span className="font-semibold">
-                <span className="text-blue-500">⬇</span>
-                {Math.round(cityData.main.temp_min)}°C
-              </span>
-              <span className="font-semibold">
-                <span className="text-orange-400">⬆</span>
-                {Math.round(cityData.main.temp_max)}°C
+      {selectedCity.name ? (
+        selectedCity.name && !loading && cityData ? (
+          <div className="flex flex-col bg-white rounded-xl p-3 font-poppins text-base mt-4 shadow-md text-indigo-900">
+            <div className="text-base w-full flex justify-between">
+              <h2>
+                {selectedCity.name}, {selectedCity.state} -
+                {selectedCity.country}
+              </h2>
+              <button onClick={onClickClose}>
+                <Close />
+              </button>
+            </div>
+            <div className="text-4xl mt-2 font-semibold">
+              <span>
+                {Math.round(cityData.main.temp)}°C{" "}
+                {cityData.weather[0].description}
               </span>
             </div>
-            <InfoItem title="Sensação" info={`${cityData.main.feels_like}°C`} />
-            <InfoItem title="Vento" info={`${cityData.wind.speed} km/h`} />
-            <InfoItem title="Humidade" info={`${cityData.main.humidity}%`} />
-          </div>
-          <span className="w-full h-0.5 mt-2 bg-indigo-200 rounded-lg" />
-
-          <div className="flex justify-between mt-3">
-            {fiveDaysForecast.map((day, index) => (
-              <DayInfo
-                key={index}
-                title={getDayOfWeek(day.date)} // Assuming the `date` field is in a format like "Tuesday"
-                minTemp={`${Math.round(day.temp_min)}°`}
-                maxTemp={`${Math.round(day.temp_max)}°`}
+            <div className="grid grid-cols-2 gap-1 mt-3">
+              <div className="text-base ">
+                <span className="font-semibold mr-3">
+                  <span className="text-blue-500">⬇</span>
+                  {Math.round(cityData.main.temp_min)}°C
+                </span>
+                <span className="font-semibold">
+                  <span className="text-orange-400">⬆</span>
+                  {Math.round(cityData.main.temp_max)}°C
+                </span>
+              </div>
+              <InfoItem
+                title="Sensação"
+                info={`${cityData.main.feels_like}°C`}
               />
-            ))}
+              <InfoItem title="Vento" info={`${cityData.wind.speed} km/h`} />
+              <InfoItem title="Humidade" info={`${cityData.main.humidity}%`} />
+            </div>
+            <span className="w-full h-0.5 mt-2 bg-indigo-200 rounded-lg" />
+
+            <div className="flex justify-between mt-3">
+              {fiveDaysForecast.map((day, index) => (
+                <DayInfo
+                  key={index}
+                  title={getDayOfWeek(day.date)}
+                  minTemp={`${Math.round(day.temp_min)}°`}
+                  maxTemp={`${Math.round(day.temp_max)}°`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ) : (
-        <WeatherSkeleton />
-      )}
+        ) : (
+          <WeatherSkeleton />
+        )
+      ) : null}
     </>
   );
 };
