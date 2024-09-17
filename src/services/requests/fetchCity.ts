@@ -11,8 +11,10 @@ export const fetchCity = async ({
   longitude,
 }: fetchCityProps): Promise<fetchCityType> => {
   try {
+
+    const apiKey = import.meta.env.VITE_API_KEY
     const { data } = await api.get(
-      `/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=pt_br&appid=16e3c009627dcd5b7f36d406db8fbbd7`
+      `/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=pt_br&appid=${apiKey}`
     );
     console.log(data);
     return data;

@@ -10,8 +10,10 @@ interface City {
 
 export const fetchCities = async (query: string): Promise<City[]> => {
   try {
+    const apiKey = import.meta.env.VITE_API_KEY
+    console.log("API Key:", import.meta.env.VITE_API_KEY);
     const { data } = await api.get(
-      `/geo/1.0/direct?q=${query}&limit=5&appid=16e3c009627dcd5b7f36d406db8fbbd7`
+      `/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
     );
 
     // Create a set to keep track of unique city, state, and country combinations
