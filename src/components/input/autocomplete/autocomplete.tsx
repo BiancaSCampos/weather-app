@@ -88,7 +88,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     }
 
     return filteredSuggestions.length ? (
-      <ul className="suggestions absolute w-full bg-white shadow-lg rounded-xl text-indigo-500 font-poppins z-10">
+      <ul className="suggestions absolute w-full bg-white shadow-lg rounded-xl text-indigo-500 font-poppins z-10 pr-1 pl-1">
         {filteredSuggestions.map((suggestion, index) => {
           const isActive = index === activeSuggestionIndex;
           const className = isActive ? "active bg-indigo-200" : "";
