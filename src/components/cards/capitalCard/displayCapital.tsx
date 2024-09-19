@@ -2,12 +2,6 @@ import React, { useEffect, useState } from "react";
 import { fetchCity } from "../../../services/requests/fetchCity";
 import { capitals } from "../../../utils/constants/capitals";
 
-interface Capital {
-  name: string;
-  maxTemp: number;
-  minTemp: number;
-}
-
 interface fetchCityType {
   name: string;
   main: {
@@ -47,9 +41,7 @@ export const DisplayCapitals = () => {
       <>
         {[...Array(27)].map((_, index) => (
           <div className="bg-white animate-pulse rounded-3xl p-2 flex items-center justify-between w-full">
-            {/* Skeleton do nome da cidade */}
             <div className="w-1/2 h-6 bg-indigo-300 rounded-3xl"></div>
-            {/* Skeleton das temperaturas */}
             <div className="flex space-x-4">
               <div className="w-12 h-6 bg-indigo-300 rounded-3xl"></div>
               <div className="w-12 h-6 bg-indigo-300 rounded-3xl"></div>
