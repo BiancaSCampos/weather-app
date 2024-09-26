@@ -16,7 +16,7 @@ export const fetchCity = async ({
     const { data } = await api.get(
       `/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=pt_br&appid=${apiKey}`
     );
-    console.log(data);
+    
     return data;
   } catch (error) {
     console.error("Error fetching suggestions:", error);
